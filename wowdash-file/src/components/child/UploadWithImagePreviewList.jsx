@@ -2,9 +2,9 @@ import { Icon } from '@iconify/react/dist/iconify.js'
 import React, { useState } from 'react'
 import {supabase} from "../../hook/supabaseClient";
 
-const UploadWithImagePreviewList = () => {
+const UploadWithImagePreviewList = ({files, setFiles}) => {
     const [fileNames, setFileNames] = useState([]);
-    const [files, setFiles] = useState([]);
+    // const [files, setFiles] = useState([]);
     const [fileURLs, setFileURLs] = useState([]);
 
     const handleFileChange = (event) => {
@@ -20,44 +20,44 @@ const UploadWithImagePreviewList = () => {
         setFiles((prev) => prev.filter((file) => file.name !== name));
     };
 
-    const handleUpload = async () => {
-        if (files.length === 0) return alert('Please select files.');
+    // const handleUpload = async () => {
+    //     if (files.length === 0) return alert('Please select files.');
 
-        const uploadedFiles = []; // To store successfully uploaded file URLs
+    //     const uploadedFiles = []; // To store successfully uploaded file URLs
 
-        for (const file of files) {
-            const { data, error } = await supabase.storage
-                .from('GeethanjalieFileStorage') // Replace with your bucket name
-                .upload(`public/${file.name}`, file, {
-                    cacheControl: '3600',
-                    upsert: false,
-                });
+    //     for (const file of files) {
+    //         const { data, error } = await supabase.storage
+    //             .from('GeethanjalieFileStorage') // Replace with your bucket name
+    //             .upload(`public/${file.name}`, file, {
+    //                 cacheControl: '3600',
+    //                 upsert: false,
+    //             });
 
-            if (error) {
-                console.error(`Error uploading ${file.name}:`, error.message);
-            } else {
-                //https://bhibujpyprblrczhoofa.supabase.co/storage/v1/object/public
-                uploadedFiles.push(`https://bhibujpyprblrczhoofa.supabase.co/storage/v1/object/public/GeethanjalieFileStorage/${data.path}`); // Save the uploaded file path
-                console.log(`${data.path} uploaded successfully:`, data);
-            }
-        }
+    //         if (error) {
+    //             console.error(`Error uploading ${file.name}:`, error.message);
+    //         } else {
+    //             //https://bhibujpyprblrczhoofa.supabase.co/storage/v1/object/public
+    //             uploadedFiles.push(`https://bhibujpyprblrczhoofa.supabase.co/storage/v1/object/public/GeethanjalieFileStorage/${data.path}`); // Save the uploaded file path
+    //             console.log(`${data.path} uploaded successfully:`, data);
+    //         }
+    //     }
 
-        // Update state after all uploads are done
-        console.log(uploadedFiles);
-        setFileURLs((prev) => [...prev, ...uploadedFiles]);
-        setFileNames([]);
-        setFiles([]);
+    //     // Update state after all uploads are done
+    //     console.log(uploadedFiles);
+    //     setFileURLs((prev) => [...prev, ...uploadedFiles]);
+    //     setFileNames([]);
+    //     setFiles([]);
 
-        alert('All files have been uploaded successfully!');
-    };
+    //     alert('All files have been uploaded successfully!');
+    // };
 
 
 
     console.log(files);
-    console.log(fileURLs);
+    // console.log(fileURLs);
 
     return (
-        <div className="col-md-6">
+        <div className="">
             <div className="card h-100 p-0">
                 <div className="card-header border-bottom bg-base py-16 px-24">
                     <h6 className="text-lg fw-semibold mb-0">Upload With Image Preview</h6>
@@ -102,13 +102,13 @@ const UploadWithImagePreviewList = () => {
                     )}
 
                 </div>
-                <button
+                {/* <button
                     type="button"
                     className="btn btn-primary-600 radius-8 px-20 py-11"
                     onClick={handleUpload}
                 >
                     Primary
-                </button>
+                </button> */}
             </div>
         </div>
     )

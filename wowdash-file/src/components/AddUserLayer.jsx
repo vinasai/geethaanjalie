@@ -1,9 +1,41 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import FormHandler from "react-form-buddy";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../hook/axiosInstance';
 
 const AddUserLayer = () => {
-
+    const [formSubmitted, setFormSubmitted] = useState(false);
+    const navigate = useNavigate();
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+
+    const validate = (values) => {
+        let errors = {};
+        if (!values.name) {
+            errors.name = "Name is required";
+        }
+        if (!values.email) {
+            errors.email = "Email is required";
+        }
+        if (!values.contactNo) {
+            errors.contactNo = "Contact No is required";
+        }
+        return errors;
+    };
+
+    const {
+        handleSubmit,
+        handleChange,
+        values,
+        errors,
+    } = FormHandler(submitAddStudent, validate);
+
+    function submitAddStudent() {
+        setFormSubmitted(true);
+    }
+
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -15,7 +47,31 @@ const AddUserLayer = () => {
             reader.readAsDataURL(file);
         }
     };
+
+    useEffect(() => {
+        if (!formSubmitted) {
+            return;
+        }
+        axiosInstance.post(`/users/addUser`, values)
+            .then((res) => {
+                console.log("User added successfully: ", res.data);
+                toast.success("User added successfully!");
+            })
+            .catch((err) => {
+                console.error("Error adding User: ", err);
+                toast.error("Something went wrong. Please try again.");
+            })
+            .finally(() => {
+                setFormSubmitted(false);
+            });
+    }, [formSubmitted]);
+
+    const handleCancel = () => {
+        navigate('/users-list'); // Navigate to the "Groups" page
+    };
+
     return (
+        <>
         <div className="card h-100 p-0 radius-12">
             <div className="card-body p-24">
                 <div className="row justify-content-center">
@@ -53,7 +109,7 @@ const AddUserLayer = () => {
                                     </div>
                                 </div>
                                 {/* Upload Image End */}
-                                <form action="#">
+                                <form onSubmit={handleSubmit}>
                                     <div className="mb-20">
                                         <label
                                             htmlFor="name"
@@ -66,7 +122,13 @@ const AddUserLayer = () => {
                                             className="form-control radius-8"
                                             id="name"
                                             placeholder="Enter Full Name"
+                                            onChange={handleChange}
+                                            name="name"
+
+                                            value={values.name || ""}
                                         />
+                                            {errors.name && <p className="text-danger">{errors.name}</p>}
+
                                     </div>
                                     <div className="mb-20">
                                         <label
@@ -80,6 +142,10 @@ const AddUserLayer = () => {
                                             className="form-control radius-8"
                                             id="email"
                                             placeholder="Enter email address"
+                                            onChange={handleChange}
+                                            name="email"
+
+                                            value={values.email || ""}
                                         />
                                     </div>
                                     <div className="mb-20">
@@ -94,6 +160,10 @@ const AddUserLayer = () => {
                                             className="form-control radius-8"
                                             id="number"
                                             placeholder="Enter phone number"
+                                            onChange={handleChange}
+                                            name="contactNo"
+
+                                            value={values.contactNo || ""}
                                         />
                                     </div>
                                     <div className="mb-20">
@@ -108,6 +178,10 @@ const AddUserLayer = () => {
                                             className="form-control radius-8"
                                             id="number"
                                             placeholder="Enter phone number"
+                                            onChange={handleChange}
+                                            name="dateOfBirth"
+
+                                            value={values.dateOfBirth || ""}
                                         />
                                     </div>
                                     {/*<div className="mb-20">*/}
@@ -171,6 +245,7 @@ const AddUserLayer = () => {
                                         <button
                                             type="button"
                                             className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
+                                            onClick={handleCancel}
                                         >
                                             Cancel
                                         </button>
@@ -188,6 +263,7 @@ const AddUserLayer = () => {
                 </div>
             </div>
         </div>
+        </>
 
     );
 };

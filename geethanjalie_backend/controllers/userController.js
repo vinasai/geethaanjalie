@@ -12,6 +12,8 @@ const registerUser = asyncHandler(async (req, res) => {
     const {
         name,
         email,
+        contactNo,
+        dateOfBirth,
         password,
         age,
         role,
@@ -25,6 +27,8 @@ const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         name,
         email,
+        contactNo,
+        dateOfBirth,
         password,
         age,
         role,
@@ -36,6 +40,8 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            contactNo: user.contactNo,
+            dateOfBirth: user.dateOfBirth,
             role: user.role,
             age: user.age,
             profilePic: user.profilePic,
@@ -47,6 +53,29 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 })
 
+const createUser = asyncHandler(async (req, res) => {
+    const {
+        name,
+        email,
+        contactNo,
+        dateOfBirth,
+    } = req.body;
+
+
+    const user = await User.create({
+        name,
+        email,
+        contactNo,
+        dateOfBirth,
+    })
+
+    if (user) {
+        res.status(201).json(user)
+    } else {
+        res.status(400).json({message: "Invalid User data"})
+    }
+})
+
 // Verify a user
 const verifiedUser = asyncHandler(async (req, res) => {
     const _id = req.params.id;
@@ -55,6 +84,8 @@ const verifiedUser = asyncHandler(async (req, res) => {
         user.firstName = req.body.firstName || user.firstName;
         user.lastName = req.body.lastName || user.lastName;
         user.email = req.body.email || user.email;
+        user.dateOfBirth = req.body.dateOfBirth || user.dateOfBirth;
+        user.contactNo = req.body.contactNo || user.contactNo;
         user.role = req.body.role || user.role;
         user.profilePic = req.body.profilePic || user.profilePic;
         user.isVerified = req.body.isVerified || user.isVerified;
@@ -141,10 +172,18 @@ const getUsers = asyncHandler(async (req, res) => {
     res.status(200).json(users)
 })
 
+const deleteUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (user) {
+        await user.deleteOne();
+        res.json({message: 'User removed'});
+    } else {
+        res.status(404).json({status: "FAILED", message: "User not found"});
+    }
+})
 
 
 
 
-
-export {registerUser, loginUser, verifiedUser, resetPassword, forgotPassword, getUsers}
+export {registerUser, loginUser, verifiedUser, resetPassword, forgotPassword, getUsers, createUser, deleteUser}
 

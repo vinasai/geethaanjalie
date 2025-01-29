@@ -12,6 +12,21 @@ const groupSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User' // Refers to the User model
+    }],
+    resources: [{
+        fileName: {
+            type: String,
+            required: true
+        },
+        fileUrl: {
+            type: String,
+            required: true
+        }
+    }]
+
 
 }, {
     timestamps: true

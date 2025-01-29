@@ -188,6 +188,16 @@ const MasterLayout = ({ children }) => {
                 <span>Files</span>
               </NavLink>
             </li>
+            <hr></hr>
+            <li>
+              <NavLink
+                to="/"
+                className={(navData) => (navData.isActive ? "active-page" : "")}
+              >
+                <Icon icon="solar:logout-2-broken" className="menu-icon" />
+                <span>Log Out</span>
+              </NavLink>
+            </li>
             <li>
               <NavLink to="/email" className={(navData) =>
                   navData.isActive ? "active-page" : ""
@@ -1464,13 +1474,13 @@ const MasterLayout = ({ children }) => {
         <footer className="d-footer">
           <div className="row align-items-center justify-content-between">
             <div className="col-auto">
-              <p className="mb-0">© 2024 WowDash. All Rights Reserved.</p>
+              <p className="mb-0">© 2025 Geethanjalie</p>
             </div>
-            <div className="col-auto">
+            {/* <div className="col-auto">
               <p className="mb-0">
                 Made by <span className="text-primary-600">wowtheme7</span>
               </p>
-            </div>
+            </div> */}
           </div>
         </footer>
       </main>

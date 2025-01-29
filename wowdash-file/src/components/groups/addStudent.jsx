@@ -1,21 +1,110 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MasterLayout from "../../masterLayout/MasterLayout";
+import axiosInstance from '../../hook/axiosInstance';
+import Multiselect from 'multiselect-react-dropdown';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import FormHandler from "react-form-buddy";
+import {useGroupStore, useEditGroupStore} from '../../hook/store';
 
 const AddStudent = () => {
+    const [studentList, setStudentList] = useState([]);
+    const [selectedValue, setSelectedValue] = useState([]);
+    const [isSubmit, setIsSubmit] = useState(false);
+    const groupId = useGroupStore((state) => state.groupId)
+    const groupData = useEditGroupStore((state)=> state.group);
+    const {
+        handleSubmit,
+        handleChange,
+        values,
+        initForm,
+        errors,
+    } = FormHandler(submitAddStudents);
 
-    const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+    function submitAddStudents() {
+        setIsSubmit(true);
+    }
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreviewUrl(reader.result);
-            };
-            reader.readAsDataURL(file);
+    console.log(groupData)
+
+    useEffect(() => {
+        // Fetch students when the component mounts
+        axiosInstance.get(`/users/getUsers`)
+            .then(res => {
+                console.log(res.data);
+                setStudentList(res.data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }, []);
+
+    function resetForm() {
+        initForm({});
+    }
+
+
+
+    const handleSave = (e) => {
+        e.preventDefault(); // Prevent form submission default behavior
+        if (selectedValue.length === 0) {
+            alert("Please select at least one student.");
+            return;
         }
+        setIsSubmit(true); // Trigger the API call via useEffect
     };
+
+    useEffect(() => {
+        if (!isSubmit) return;
+
+        if (!groupId) {
+            console.error("Group ID is missing.");
+            toast.error("Group ID is required to update the group.");
+            setIsSubmit(false);
+            return;
+        }
+
+        const payload = {
+            userIds: selectedValue.map(student => student._id),
+        };
+
+        axiosInstance.put(`/groups/updateGroup/${groupId}`, payload)
+            .then((res) => {
+                console.log("Successfully updated:", res.data);
+                toast.success("Successfully Updated");
+            })
+            .catch((err) => {
+                console.error("Error updating group:", err);
+                toast.error("Something went wrong");
+            })
+            .finally(() => {
+                setIsSubmit(false);
+                setSelectedValue([]);
+            });
+    }, [isSubmit]);
+
+
+
+    useEffect(()=>{
+        if(groupData?.members){
+            setSelectedValue(groupData.members)
+        }
+
+    },[groupData])
+
+    function onSelect(selectedList) {
+        setSelectedValue(selectedList);
+    }
+
+    function onRemove(selectedList) {
+        setSelectedValue(selectedList);
+    }
+
+    console.log(groupData,"adfg")
+    console.log()
+    console.log(selectedValue,":adfg")
+
     return (
         <MasterLayout>
             <div className="card h-100 p-0 radius-12">
@@ -25,79 +114,8 @@ const AddStudent = () => {
                             <div className="card border">
                                 <div className="card-body">
                                     <h6 className="text-md text-primary-light mb-16">Assign Student to Group</h6>
-                                    {/* Upload Image Start */}
-                                    <div className="mb-24 mt-16">
-                                        <div className="avatar-upload">
-                                            {/*<div className="avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer">*/}
-                                            {/*    <input*/}
-                                            {/*        type="file"*/}
-                                            {/*        id="imageUpload"*/}
-                                            {/*        accept=".png, .jpg, .jpeg"*/}
-                                            {/*        hidden*/}
-                                            {/*        onChange={handleImageChange}*/}
-                                            {/*    />*/}
-                                            {/*    <label*/}
-                                            {/*        htmlFor="imageUpload"*/}
-                                            {/*        className="w-32-px h-32-px d-flex justify-content-center align-items-center bg-primary-50 text-primary-600 border border-primary-600 bg-hover-primary-100 text-lg rounded-circle">*/}
-                                            {/*        <Icon icon="solar:camera-outline" className="icon"></Icon>*/}
-                                            {/*    </label>*/}
-                                            {/*</div>*/}
-                                            {/*<div className="avatar-preview">*/}
-                                            {/*    <div*/}
-                                            {/*        id="imagePreview"*/}
-                                            {/*        style={{*/}
-                                            {/*            backgroundImage: imagePreviewUrl ? `url(${imagePreviewUrl})` : '',*/}
 
-                                            {/*        }}*/}
-                                            {/*    >*/}
-                                            {/*    </div>*/}
-                                            {/*</div>*/}
-                                        </div>
-                                    </div>
-                                    {/* Upload Image End */}
-                                    <form action="#">
-                                        {/*<div className="mb-20">*/}
-                                        {/*    <label*/}
-                                        {/*        htmlFor="name"*/}
-                                        {/*        className="form-label fw-semibold text-primary-light text-sm mb-8"*/}
-                                        {/*    >*/}
-                                        {/*        Group Name <span className="text-danger-600">*</span>*/}
-                                        {/*    </label>*/}
-                                        {/*    <input*/}
-                                        {/*        type="text"*/}
-                                        {/*        className="form-control radius-8"*/}
-                                        {/*        id="name"*/}
-                                        {/*        placeholder="Enter Full Name"*/}
-                                        {/*    />*/}
-                                        {/*</div>*/}
-                                        {/*<div className="mb-20">*/}
-                                        {/*    <label*/}
-                                        {/*        htmlFor="email"*/}
-                                        {/*        className="form-label fw-semibold text-primary-light text-sm mb-8"*/}
-                                        {/*    >*/}
-                                        {/*        Email <span className="text-danger-600">*</span>*/}
-                                        {/*    </label>*/}
-                                        {/*    <input*/}
-                                        {/*        type="email"*/}
-                                        {/*        className="form-control radius-8"*/}
-                                        {/*        id="email"*/}
-                                        {/*        placeholder="Enter email address"*/}
-                                        {/*    />*/}
-                                        {/*</div>*/}
-                                        {/*<div className="mb-20">*/}
-                                        {/*    <label*/}
-                                        {/*        htmlFor="number"*/}
-                                        {/*        className="form-label fw-semibold text-primary-light text-sm mb-8"*/}
-                                        {/*    >*/}
-                                        {/*        Schedule time*/}
-                                        {/*    </label>*/}
-                                        {/*    <input*/}
-                                        {/*        type="time"*/}
-                                        {/*        className="form-control radius-8"*/}
-                                        {/*        id="number"*/}
-                                        {/*        placeholder="Enter phone number"*/}
-                                        {/*    />*/}
-                                        {/*</div>*/}
+                                    <form onSubmit={handleSave}>
                                         <div className="mb-20">
                                             <label
                                                 htmlFor="depart"
@@ -106,57 +124,19 @@ const AddStudent = () => {
                                                 Students
                                                 <span className="text-danger-600">*</span>{" "}
                                             </label>
-                                            <select
-                                                className="form-control radius-8 form-select"
-                                                id="depart"
-                                                defaultValue="Enter Event Title"
-                                            >
-                                                <option value="Enter Event Title" disabled>
-                                                    Students Name
-                                                </option>
-                                                <option value="Enter Event Title One">Enter Event Title One</option>
-                                                <option value="Enter Event Title Two">Enter Event Title Two</option>
-                                            </select>
+                                            <Multiselect
+                                                options={studentList} // Options to display in the dropdown
+                                                selectedValues={selectedValue} // Preselected value to persist in dropdown
+                                                onSelect={onSelect} // Function will trigger on select event
+                                                onRemove={onRemove} // Function will trigger on remove event
+                                                displayValue="name" // Property name to display in the dropdown options
+                                            />
                                         </div>
-                                        {/*<div className="mb-20">*/}
-                                        {/*    <label*/}
-                                        {/*        htmlFor="desig"*/}
-                                        {/*        className="form-label fw-semibold text-primary-light text-sm mb-8"*/}
-                                        {/*    >*/}
-                                        {/*        Designation*/}
-                                        {/*        <span className="text-danger-600">*</span>{" "}*/}
-                                        {/*    </label>*/}
-                                        {/*    <select*/}
-                                        {/*        className="form-control radius-8 form-select"*/}
-                                        {/*        id="desig"*/}
-                                        {/*        defaultValue="Enter Designation Title"*/}
-                                        {/*    >*/}
-                                        {/*        <option value="Enter Designation Title" disabled>*/}
-                                        {/*            Enter Designation Title*/}
-                                        {/*        </option>*/}
-                                        {/*        <option value="Enter Designation Title One">Enter Designation Title One</option>*/}
-                                        {/*        <option value="Enter Designation Title Two">Enter Designation Title Two</option>*/}
-                                        {/*    </select>*/}
-                                        {/*</div>*/}
-                                        {/*<div className="mb-20">*/}
-                                        {/*    <label*/}
-                                        {/*        htmlFor="desc"*/}
-                                        {/*        className="form-label fw-semibold text-primary-light text-sm mb-8"*/}
-                                        {/*    >*/}
-                                        {/*        Description*/}
-                                        {/*    </label>*/}
-                                        {/*    <textarea*/}
-                                        {/*        name="#0"*/}
-                                        {/*        className="form-control radius-8"*/}
-                                        {/*        id="desc"*/}
-                                        {/*        placeholder="Write description..."*/}
-                                        {/*        defaultValue={""}*/}
-                                        {/*    />*/}
-                                        {/*</div>*/}
                                         <div className="d-flex align-items-center justify-content-center gap-3">
                                             <button
                                                 type="button"
                                                 className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
+                                                onClick={() => setSelectedValue([])}
                                             >
                                                 Cancel
                                             </button>
@@ -169,13 +149,13 @@ const AddStudent = () => {
                                         </div>
                                     </form>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </MasterLayout>
-
     );
 };
 

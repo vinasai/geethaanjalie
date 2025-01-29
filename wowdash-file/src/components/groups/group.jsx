@@ -2,15 +2,54 @@ import {Icon} from '@iconify/react/dist/iconify.js';
 import React, {useEffect, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import MasterLayout from "../../masterLayout/MasterLayout";
+import PopUp from '../PopUp/PopUp';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axiosInstance from "../../hook/axiosInstance"
+import {useEditGroupStore, useGroupStore} from '../../hook/store';
 
 const Group = () => {
     const [studentList, setStudentList] = useState([]);
     const [update, setUpdate] = useState(false);
     const navigate = useNavigate();
+    const [show, setShow] = useState(false);
+    const handleShow = () => setShow(true);
+    const handleClose = () => setShow(false);
+    const [deleteId, setDeleteId] = useState(null); 
+    const setGroupId = useGroupStore((state) => state.setGroupId)
+    const setGroupData = useEditGroupStore((state)=> state.setGroupData)
 
-    const handleNavigate = () => {
+    console.log(show);
+    
+
+    function handleDelete(_id) {
+        // setDeleteId(_id);
+            axiosInstance
+            .delete(`/groups/deleteGroup/${deleteId}`)
+            .then(() => {
+              console.log(`Group with ID ${deleteId} deleted successfully`);
+              toast.success("Group Deleted Successfull")
+              setDeleteId(null); // Reset deleteId
+              setUpdate((prev) => !prev); // Trigger re-fetch of groups
+              setShow(false)
+              
+            })
+            .catch((err) => {
+              console.error(`Error deleting group with ID ${deleteId}:`, err);
+              toast.error("Something went wrong. Please try again.");
+              setDeleteId(null); // Reset deleteId in case of error
+            });
+    }
+
+    const handleNavigate = (groupId) => {
+        setGroupId(groupId._id);
+        setGroupData(groupId)
         navigate("/add-student")
+    }
+
+    const handleEditNavigate = (group) => {
+        setGroupData(group)
+        navigate("/edit-group")
     }
 
     const handleFileUpload = () => {
@@ -25,9 +64,15 @@ const Group = () => {
             .catch(err => {
                 console.log(err);
             })
-    })
+    },[update])
+
+
+      console.log(deleteId);
+      
+
     return (
         <MasterLayout>
+            <PopUp handleClose={handleClose} show={show} handleAction={handleDelete} modalHeading={"Delete Group"} modalContent={"ARE YOU SURE YOU WANT TO DELETE THIS DATA?"} modalButton={"Delete"} />
             <h6>
                 Groups
             </h6>
@@ -100,26 +145,11 @@ const Group = () => {
                         <thead>
 
                         <tr>
-                            {/*<th scope="col">*/}
-                            {/*    <div className="d-flex align-items-center gap-10">*/}
-                            {/*        <div className="form-check style-check d-flex align-items-center">*/}
-                            {/*            <input*/}
-                            {/*                className="form-check-input radius-4 border input-form-dark"*/}
-                            {/*                type="checkbox"*/}
-                            {/*                name="checkbox"*/}
-                            {/*                id="selectAll"*/}
-                            {/*            />*/}
-                            {/*        </div>*/}
-                            {/*        S.L*/}
-                            {/*    </div>*/}
-                            {/*</th>*/}
+                            
                             <th scope="col">No</th>
-                            {/*<th scope="col">Join Date</th>*/}
                             <th scope="col">Group Name</th>
-                            {/*<th scope="col">Email</th>*/}
-                            {/*<th scope="col">Contact No</th>*/}
                             <th scope="col">Schedule Time</th>
-                            {/*<th scope="col">Upload</th>*/}
+                            <th scope="col">Day</th>
                             <th scope="col" className="text-center">
                                 Status
                             </th>
@@ -131,28 +161,10 @@ const Group = () => {
                         <tbody>
                         {studentList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((data, index) => (
                             <tr key={index + "asd"}>
-                                {/*<th scope="row">{index + 1}</th>*/}
-                                {/*<td>*/}
-                                {/*    <div className="d-flex align-items-center gap-10">*/}
-                                {/*        <div className="form-check style-check d-flex align-items-center">*/}
-                                {/*            <input*/}
-                                {/*                className="form-check-input radius-4 border border-neutral-400"*/}
-                                {/*                type="checkbox"*/}
-                                {/*                name="checkbox"*/}
-                                {/*            />*/}
-                                {/*        </div>*/}
-                                {/*        01*/}
-                                {/*    </div>*/}
-                                {/*</td>*/}
                                 <th scope="row">{index + 1}</th>
                                 {/*<td>25 Jan 2024</td>*/}
                                 <td>
                                     <div className="d-flex align-items-center">
-                                        {/*<img*/}
-                                        {/*    src="assets/images/user-list/user-list1.png"*/}
-                                        {/*    alt="Wowdash"*/}
-                                        {/*    className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                                        {/*/>*/}
                                         <div className="flex-grow-1">
                                             <span className="text-md mb-0 fw-normal text-secondary-light">
                                                 {data.groupName}
@@ -160,25 +172,9 @@ const Group = () => {
                                         </div>
                                     </div>
                                 </td>
-                                {/*<td>*/}
-                                {/*    <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                                {/*        {data.email}*/}
-                                {/*    </span>*/}
-                                {/*</td>*/}
-                                {/*<td>{data.phoneNo}</td>*/}
+                               
                                 <td>{data.scheduleTime}</td>
-                                {/*<td>*/}
-                                {/*    <button*/}
-                                {/*        type="button"*/}
-                                {/*        className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                                {/*        onClick={handleFileUpload}*/}
-                                {/*    >*/}
-                                {/*        <Icon*/}
-                                {/*            icon="lucide:upload"*/}
-                                {/*            className="icon text-xl"*/}
-                                {/*        />*/}
-                                {/*    </button>*/}
-                                {/*</td>*/}
+                                
                                 {data.isEmailVerified === true ? <td className="text-center">
                                     <span
                                         className="badge text-sm fw-semibold text-success-600 bg-success-100 px-20 py-9 radius-4 text-white">
@@ -196,6 +192,7 @@ const Group = () => {
                                         <button
                                             type="button"
                                             className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                            
                                         >
                                             <Icon
                                                 icon="majesticons:eye-line"
@@ -205,12 +202,17 @@ const Group = () => {
                                         <button
                                             type="button"
                                             className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                            onClick={()=> handleEditNavigate(data)}
                                         >
                                             <Icon icon="lucide:edit" className="menu-icon"/>
                                         </button>
                                         <button
                                             type="button"
                                             className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                                            onClick={()=>{
+                                                handleShow()
+                                                setDeleteId(data._id);
+                                            }}
                                         >
                                             <Icon
                                                 icon="fluent:delete-24-regular"
@@ -220,7 +222,7 @@ const Group = () => {
                                         <button
                                             type="button"
                                             className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                                            onClick={handleNavigate}
+                                            onClick={() => handleNavigate(data)} // Pass the group ID
                                         >
                                             <Icon
                                                 icon="majesticons:plus"
@@ -230,627 +232,7 @@ const Group = () => {
                                     </div>
                                 </td>
                             </tr>))}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            02*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>25 Jan 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list2.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Annette Black*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            redaniel@gmail.com*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Design</td>*/}
-                        {/*    <td>UI UX Designer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Inactive*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            03*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>10 Feb 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list3.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Ronald Richards*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            seannand@mail.ru*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Design</td>*/}
-                        {/*    <td>UI UX Designer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Active*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            04*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>10 Feb 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list4.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Eleanor Pena*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            miyokoto@mail.ru*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Design</td>*/}
-                        {/*    <td>UI UX Designer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Active*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            05*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>15 March 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list5.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Leslie Alexander*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            icadahli@gmail.com*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Design</td>*/}
-                        {/*    <td>UI UX Designer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Inactive*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            06*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>15 March 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list6.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Albert Flores*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            warn@mail.ru*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Design</td>*/}
-                        {/*    <td>UI UX Designer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Active*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            07*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>27 April 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list7.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Jacob Jones*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            zitka@mail.ru*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Development</td>*/}
-                        {/*    <td>Frontend developer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Active*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            08*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>25 Jan 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list8.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Jerome Bell*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            igerrin@gmail.com*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Development</td>*/}
-                        {/*    <td>Frontend developer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-neutral-200 text-neutral-600 border border-neutral-400 px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Inactive*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            09*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>30 April 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list2.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Marvin McKinney*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            maka@yandex.ru*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Development</td>*/}
-                        {/*    <td>Frontend developer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Active*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
-                        {/*<tr>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center gap-10">*/}
-                        {/*            <div className="form-check style-check d-flex align-items-center">*/}
-                        {/*                <input*/}
-                        {/*                    className="form-check-input radius-4 border border-neutral-400"*/}
-                        {/*                    type="checkbox"*/}
-                        {/*                    name="checkbox"*/}
-                        {/*                />*/}
-                        {/*            </div>*/}
-                        {/*            10*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>30 April 2024</td>*/}
-                        {/*    <td>*/}
-                        {/*        <div className="d-flex align-items-center">*/}
-                        {/*            <img*/}
-                        {/*                src="assets/images/user-list/user-list10.png"*/}
-                        {/*                alt="Wowdash"*/}
-                        {/*                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"*/}
-                        {/*            />*/}
-                        {/*            <div className="flex-grow-1">*/}
-                        {/*                <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*                    Cameron Williamson*/}
-                        {/*                </span>*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*    <td>*/}
-                        {/*        <span className="text-md mb-0 fw-normal text-secondary-light">*/}
-                        {/*            danten@mail.ru*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td>Development</td>*/}
-                        {/*    <td>Frontend developer</td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <span className="bg-success-focus text-success-600 border border-success-main px-24 py-4 radius-4 fw-medium text-sm">*/}
-                        {/*            Active*/}
-                        {/*        </span>*/}
-                        {/*    </td>*/}
-                        {/*    <td className="text-center">*/}
-                        {/*        <div className="d-flex align-items-center gap-10 justify-content-center">*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="majesticons:eye-line"*/}
-                        {/*                    className="icon text-xl"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon icon="lucide:edit" className="menu-icon" />*/}
-                        {/*            </button>*/}
-                        {/*            <button*/}
-                        {/*                type="button"*/}
-                        {/*                className="remove-item-btn bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"*/}
-                        {/*            >*/}
-                        {/*                <Icon*/}
-                        {/*                    icon="fluent:delete-24-regular"*/}
-                        {/*                    className="menu-icon"*/}
-                        {/*                />*/}
-                        {/*            </button>*/}
-                        {/*        </div>*/}
-                        {/*    </td>*/}
-                        {/*</tr>*/}
+                       
                         </tbody>
                     </table>
                 </div>

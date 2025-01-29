@@ -86,14 +86,18 @@ import AddGroup from "./components/groups/addGroup";
 import AddStudent from "./components/groups/addStudent";
 import UploadFiles from "./components/groups/uploadFiles";
 import Files from "./components/files/files";
+import PopUp from "./components/PopUp/PopUp";
+import { ToastContainer } from "react-toastify";
+import EditGroup from "./components/groups/editGroup";
 
 
 function App() {
   return (
     <BrowserRouter>
       <RouteScrollToTop />
+         <ToastContainer />
       <Routes>
-        <Route exact path="/" element={<HomePageOne />} />
+        <Route exact path="/dashboard" element={<HomePageOne />} />
         <Route exact path="/index-2" element={<HomePageTwo />} />
         <Route exact path="/index-3" element={<HomePageThree />} />
         <Route exact path="/index-4" element={<HomePageFour />} />
@@ -101,10 +105,14 @@ function App() {
         <Route exact path="/index-6" element={<HomePageSix />} />
         <Route exact path="/index-7" element={<HomePageSeven />} />
         {/* SL */}
-        <Route exact path="/add-user" element={<AddUserPage />} />
-        <Route exact path="/add-group" element={<AddGroup/>} />
-        <Route exact path="/add-student" element={<AddStudent/>} />
-        <Route exact path="/upload-files" element={<UploadFiles />} />
+        <Route exact path="/pop-up" element={<PopUp />} />
+        
+        
+        <Route exact path="/add-user" element={<AddUserPage />} /> {/* used */}
+        <Route exact path="/add-group" element={<AddGroup/>} /> {/* used */}
+        <Route exact path="/edit-group" element={<EditGroup/>} /> {/* used */}
+        <Route exact path="/add-student" element={<AddStudent/>} /> {/* used */}
+        <Route exact path="/upload-files" element={<UploadFiles />} /> {/* used */}
         <Route exact path="/files" element={<Files/>} />
         <Route exact path="/alert" element={<AlertPage />} />
         <Route exact path="/assign-role" element={<AssignRolePage />} />
@@ -154,8 +162,8 @@ function App() {
         <Route exact path="/progress" element={<ProgressPage />} />
         <Route exact path="/radio" element={<RadioPage />} />
         <Route exact path="/role-access" element={<RoleAccessPage />} />
-        <Route exact path="/sign-in" element={<SignInPage />} />
-        <Route exact path="/sign-up" element={<SignUpPage />} />
+        <Route exact path="/sign-in" element={<SignInPage />} /> {/* used */}
+        <Route exact path="/" element={<SignUpPage />} /> {/* used */}
         <Route exact path="/star-rating" element={<StarRatingPage />} />
         <Route exact path="/starred" element={<StarredPage />} />
         <Route exact path="/switch" element={<SwitchPage />} />
