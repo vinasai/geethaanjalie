@@ -69,6 +69,17 @@ const editGroups = asyncHandler(async (req, res) => {
 });
 
 
+const getGroupCount = asyncHandler(async (req, res) => {
+    try {
+        const groupCount = await Group.countDocuments();
+        res.status(200).json({ groupCount })
+    } catch (error) {
+        console.error("Error fetching group count:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+})
+
+
 
 const deleteGroup = asyncHandler(async (req, res) => {
     const group = await Group.findById(req.params.id);
@@ -103,4 +114,4 @@ const saveFileUrl = asyncHandler(async (req, res) => {
     res.status(200).json(response)
 });
 
-export { createGroup, getGroups, editGroups, deleteGroup, saveFileUrl }
+export { createGroup, getGroups, editGroups, deleteGroup, saveFileUrl, getGroupCount }

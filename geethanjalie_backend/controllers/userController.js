@@ -19,9 +19,9 @@ const registerUser = asyncHandler(async (req, res) => {
         role,
         profilePic
     } = req.body;
-    const userExists = await User.findOne({email})
+    const userExists = await User.findOne({ email })
     if (userExists) {
-        res.status(400).json({message: "User already exists"})
+        res.status(400).json({ message: "User already exists" })
     }
 
     const user = await User.create({
@@ -49,7 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
             isEmailVerified: user.isEmailVerified,
         })
     } else {
-        res.status(400).json({message: "Invalid user data"})
+        res.status(400).json({ message: "Invalid user data" })
     }
 })
 
@@ -72,14 +72,14 @@ const createUser = asyncHandler(async (req, res) => {
     if (user) {
         res.status(201).json(user)
     } else {
-        res.status(400).json({message: "Invalid User data"})
+        res.status(400).json({ message: "Invalid User data" })
     }
 })
 
 // Verify a user
 const verifiedUser = asyncHandler(async (req, res) => {
     const _id = req.params.id;
-    const user = await User.findById({_id});
+    const user = await User.findById({ _id });
     if (user) {
         user.firstName = req.body.firstName || user.firstName;
         user.lastName = req.body.lastName || user.lastName;
@@ -114,8 +114,8 @@ const verifiedUser = asyncHandler(async (req, res) => {
 
 // Login a user
 const loginUser = asyncHandler(async (req, res) => {
-    const {email, password} = req.body;
-    const user = await User.findOne({email});
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
     if (user && (await user.matchPassword(password))) {
         res.status(200).json(user)
     } else {
@@ -124,18 +124,27 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 })
 
+const getUserCount = asyncHandler(async (req, res) => {
+    try {
+        const userCount = await User.countDocuments();
+        res.status(200).json({ userCount })
+    } catch (error) {
+        console.error("Error fetching user count:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+})
 // user forgot password
 const forgotPassword = asyncHandler(async (req, res) => {
-    const {email} = req.body;
+    const { email } = req.body;
     // const user = await User.findOne({email});
-    if(!email) {
-        res.status(404).json({message: "Email not found"})
+    if (!email) {
+        res.status(404).json({ message: "Email not found" })
     }
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
     if (!user) {
-        res.status(404).json({message: "User not found"})
+        res.status(404).json({ message: "User not found" })
     }
-    const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {expiresIn: '60'});
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '60' });
     const date = new Date();
     const newMinutes = date.getMinutes() + 60;
     date.setMinutes(newMinutes);
@@ -145,9 +154,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
     const verificationEmailResponse = await sendPasswordResetEmail(email, token, user.name);
     if (verificationEmailResponse.error) {
-        res.status(404).json({message: "Email couldn't send", verificationEmailResponse})
+        res.status(404).json({ message: "Email couldn't send", verificationEmailResponse })
     } else {
-        res.status(200).json({message: "Email sent successfully"})
+        res.status(200).json({ message: "Email sent successfully" })
     }
 
 })
@@ -156,11 +165,11 @@ const forgotPassword = asyncHandler(async (req, res) => {
 // user reset password
 const resetPassword = asyncHandler(async (req, res) => {
     const _id = req.params.id;
-    const user = await User.findById({_id});
+    const user = await User.findById({ _id });
     if (user) {
         user.password = req.body.password;
         const resetPassword = await user.save();
-        res.status(200).json({message: "Password reset successfully", resetPassword})
+        res.status(200).json({ message: "Password reset successfully", resetPassword })
     } else {
         res.status(404)
         throw new Error("User not found")
@@ -176,14 +185,14 @@ const deleteUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {
         await user.deleteOne();
-        res.json({message: 'User removed'});
+        res.json({ message: 'User removed' });
     } else {
-        res.status(404).json({status: "FAILED", message: "User not found"});
+        res.status(404).json({ status: "FAILED", message: "User not found" });
     }
 })
 
 
 
 
-export {registerUser, loginUser, verifiedUser, resetPassword, forgotPassword, getUsers, createUser, deleteUser}
+export { getUserCount, registerUser, loginUser, verifiedUser, resetPassword, forgotPassword, getUsers, createUser, deleteUser }
 

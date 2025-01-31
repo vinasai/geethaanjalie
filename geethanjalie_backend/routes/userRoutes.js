@@ -7,7 +7,9 @@ import {
     registerUser,
     resetPassword,
     verifiedUser,
+    getUserCount
 } from '../controllers/userController.js';
+import { get } from 'mongoose';
 
 const router = express.Router();
 
@@ -21,6 +23,7 @@ router.route('/forgotPassword').post(forgotPassword); // api for user forgot pas
 router.route('/getUsers').get(getUsers); // api for get all users
 router.route('/addUser').post(createUser);
 router.route('/deleteUser/:id').delete(deleteUser);
+router.route('/userCount').get(getUserCount);
 
 
 export default router;
