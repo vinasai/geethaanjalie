@@ -153,7 +153,7 @@ const Header = () => {
                               </nav>
                            </div>
                         </div>
-                        {/* <div className="col-xxl-3 col-xl-3 col-lg-2 col-md-6 col-6">
+                        <div className="col-xxl-3 col-xl-3 col-lg-2 col-md-6 col-6">
                            <div className="header__bottom-right d-flex justify-content-end align-items-center pl-30">
                               <div className="header__search w-100 d-none d-xl-block">
                                  <form onSubmit={handleSubmit}>
@@ -175,7 +175,7 @@ const Header = () => {
                                  </button>
                               </div>
                            </div>
-                        </div> */}
+                        </div>
                      </div>
                   </div>
                </div>

@@ -51,12 +51,12 @@ const Sidebar = ({ show, handleClose }) => {
 
                   <div className="sidebar__content">
 
-                     <div className="offcanvas__search mb-25">
+                     {/* <div className="offcanvas__search mb-25">
                         <form onSubmit={handleSubmit}>
                            <input onChange={(e) => setSearchValue(e.target.value)} type="text" placeholder="What are you searching for?" />
                            <button type="submit" ><i className="far fa-search"></i></button>
                         </form>
-                     </div>
+                     </div> */}
 
                      <div className="mobile-menu">
                         <nav id="mobile-menu">
@@ -64,19 +64,22 @@ const Sidebar = ({ show, handleClose }) => {
                               {
                                  !user?.email &&
                                  <>
-                                    <Collapsible trigger={<Link href="/">Home</Link>} triggerTagName="div"
+                                    {/* <Collapsible trigger={<Link href="/home-three">Home</Link>} triggerTagName="div"
                                        triggerOpenedClassName="icon_close" triggerClassName="iconAdd" open={false}>
                                        <ul className="sidebar_sub_menu submenu text-white">
                                           <li><Link href="/home"><a >Home Style 1</a></Link></li>
                                           <li><Link href="/home-two"><a >Home Style 2</a></Link></li>
                                           <li><Link href="/home-three"><a >Home Style 3</a></Link></li>
                                        </ul>
-                                    </Collapsible>
+                                    </Collapsible> */}
+
+                                    <div className='single_link iconAdd '>
+                                       <li><Link href="/home-three"><a>Home</a></Link></li>
+                                    </div>
 
                                     <div className='single_link iconAdd '>
                                        <li><Link href="/about"><a>About</a></Link></li>
                                     </div>
-
                                     {/* <Collapsible trigger={<Link href="/courses">Courses</Link>} triggerTagName="div"
                                        triggerOpenedClassName="icon_close" triggerClassName="iconAdd" open={false}>
                                        <ul className="sidebar_sub_menu submenu text-white">
@@ -87,7 +90,7 @@ const Sidebar = ({ show, handleClose }) => {
                                        </ul>
                                     </Collapsible> */}
 
-                                    <Collapsible trigger={<Link href="/about">Pages</Link>} triggerTagName="div"
+                                    {/* <Collapsible trigger={<Link href="/about">Pages</Link>} triggerTagName="div"
                                        triggerOpenedClassName="icon_close" triggerClassName="iconAdd" open={false}>
                                        <ul className="sidebar_sub_menu submenu text-white">
                                           <li><Link href="/events"><a >Our Events</a></Link></li>
@@ -100,15 +103,15 @@ const Sidebar = ({ show, handleClose }) => {
                                           <li><Link href="/cart"><a >Cart</a></Link></li>
                                           <li><Link href="/checkout"><a >Checkout</a></Link></li>
                                        </ul>
-                                    </Collapsible>
+                                    </Collapsible> */}
 
-                                    <Collapsible trigger={<Link href="/blog">Blog</Link>} triggerTagName="div"
+                                    {/* <Collapsible trigger={<Link href="/blog">Blog</Link>} triggerTagName="div"
                                        triggerOpenedClassName="icon_close" triggerClassName="iconAdd" open={false}>
                                        <ul className="sidebar_sub_menu submenu text-white">
                                           <li><Link href="/blog"><a >Blog</a></Link></li>
                                           <li><Link href="/blog-details"><a >Blog Details</a></Link></li>
                                        </ul>
-                                    </Collapsible>
+                                    </Collapsible> */}
 
                                     <div className='single_link iconAdd border-0'>
                                        <li><Link href="/contact"><a >Contact</a></Link></li>
@@ -158,7 +161,7 @@ const Sidebar = ({ show, handleClose }) => {
                                  <i className="fal fa-map-marker-alt"></i>
                               </div>
                               <div className="offcanvas__contact-text">
-                                 <a target="_blank" rel="noreferrer" href="https://www.google.com/maps/place/Dhaka/@23.7806207,90.3492859,12z/data=!3m1!4b1!4m5!3m4!1s0x3755b8b087026b81:0x8fa563bbdd5904c2!8m2!3d23.8104753!4d90.4119873">12/A, Mirnada City Tower, NYC</a>
+                                 <a target="_blank" rel="noreferrer" href="https://www.google.com/maps/place/Dhaka/@23.7806207,90.3492859,12z/data=!3m1!4b1!4m5!3m4!1s0x3755b8b087026b81:0x8fa563bbdd5904c2!8m2!3d23.8104753!4d90.4119873">Melbourne, Australia</a>
                               </div>
                            </li>
                            <li className="d-flex align-items-center">
