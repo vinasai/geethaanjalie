@@ -16,8 +16,26 @@ const Group = () => {
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
     const [deleteId, setDeleteId] = useState(null); 
-    const setGroupId = useGroupStore((state) => state.setGroupId)
-    const setGroupData = useEditGroupStore((state)=> state.setGroupData)
+    const setGroupId = useGroupStore((state) => state.setGroupId);
+    const setGroupData = useEditGroupStore((state)=> state.setGroupData);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    // Filter the list based on search query
+    const filteredList = studentList.filter(item => {
+        const searchTerm = searchQuery.toLowerCase();
+        return (
+            item.groupName?.toLowerCase().includes(searchTerm) ||
+            item.scheduleTime?.toLowerCase().includes(searchTerm) ||
+            (Array.isArray(item.day) 
+                ? item.day.some(d => d.toLowerCase().includes(searchTerm))
+                : item.day?.toString().toLowerCase().includes(searchTerm))
+        );
+    });
 
     console.log(show);
     
@@ -81,8 +99,19 @@ const Group = () => {
             <div
                 className="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
                 <div className="d-flex align-items-center flex-wrap gap-3">
-                    <span className="text-md fw-medium text-secondary-light mb-0">Show</span>
-                    <select className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
+                    <span className="text-md fw-medium text-secondary-light mb-0"></span>
+                    <button
+                    type="button"
+                    className="bg-info-focus bg-hover-info-200 text-info-600  fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                    onClick={handleFileUpload}
+                >
+                    <Icon
+                        icon="lucide:upload"
+                        className="icon text-xl"
+                    />  
+                    
+                </button>
+                {/*    <select className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
                             defaultValue="Select Number">
                         <option value="Select Number" disabled>
                             Select Number
@@ -98,15 +127,24 @@ const Group = () => {
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </select>
+
+                    
                     <form className="navbar-search">
                         <input
-                            type="text"
-                            className="bg-base h-40-px w-auto"
-                            name="search"
-                            placeholder="Search"
+                               type="text"
+                                className="bg-base h-40-px w-auto"
+                                name="search"
+                                placeholder="Search"
+                                value={searchQuery}
+                                onChange={handleSearchChange}
                         />
                         <Icon icon="ion:search-outline" className="icon"/>
+
                     </form>
+
+                    */} 
+                   
+                   {/*
                     <select className="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px"
                             defaultValue="Select Status">
                         <option value="Select Status" disabled>
@@ -115,17 +153,12 @@ const Group = () => {
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
                     </select>
+
+                      */} 
                 </div>
-                <button
-                    type="button"
-                    className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
-                    onClick={handleFileUpload}
-                >
-                    <Icon
-                        icon="lucide:upload"
-                        className="icon text-xl"
-                    />
-                </button>
+                
+                
+               
 
                 <Link
                     to="/add-group"
@@ -137,6 +170,8 @@ const Group = () => {
                     />
                     Add Group
                 </Link>
+
+                
 
             </div>
             <div className="card-body p-24">
@@ -150,19 +185,20 @@ const Group = () => {
                             <th scope="col">Group Name</th>
                             <th scope="col">Schedule Time</th>
                             <th scope="col">Day</th>
-                            <th scope="col" className="text-center">
+                        {/*    <th scope="col" className="text-center">
                                 Status
-                            </th>
+                            </th>   */}
                             <th scope="col" className="text-center">
                                 Action
                             </th>
+                            
                         </tr>
                         </thead>
                         <tbody>
                         {studentList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((data, index) => (
                             <tr key={index + "asd"}>
                                 <th scope="row">{index + 1}</th>
-                                {/*<td>25 Jan 2024</td>*/}
+                                
                                 <td>
                                     <div className="d-flex align-items-center">
                                         <div className="flex-grow-1">
@@ -174,8 +210,11 @@ const Group = () => {
                                 </td>
                                
                                 <td>{data.scheduleTime}</td>
+                        
+                                <td>{data.day}</td>
+
                                 
-                                {data.isEmailVerified === true ? <td className="text-center">
+                    {/*            {data.isEmailVerified === true ? <td className="text-center">
                                     <span
                                         className="badge text-sm fw-semibold text-success-600 bg-success-100 px-20 py-9 radius-4 text-white">
                                         Verified
@@ -186,10 +225,10 @@ const Group = () => {
                                         className="badge text-sm fw-semibold text-danger-600 bg-danger-100 px-20 py-9 radius-4 text-white">
                                         Not Verified
                                     </span>
-                                    </td>}
+                                    </td>}   */}
                                 <td className="text-center">
                                     <div className="d-flex align-items-center gap-10 justify-content-center">
-                                        <button
+                                    {/*    <button
                                             type="button"
                                             className="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                                             
@@ -198,7 +237,9 @@ const Group = () => {
                                                 icon="majesticons:eye-line"
                                                 className="icon text-xl"
                                             />
-                                        </button>
+                                        </button>   */}
+
+                                        
                                         <button
                                             type="button"
                                             className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"

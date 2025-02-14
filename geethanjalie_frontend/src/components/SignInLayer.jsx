@@ -65,7 +65,7 @@ const SignInLayer = () => {
                         </Link>
                         <h4 className="mb-12">Sign In to your Account</h4>
                         <p className="mb-32 text-secondary-light text-lg">
-                            Welcome back! please enter your detail
+                            Welcome back! please enter your details
                         </p>
                     </div>
                     <form onSubmit={handleSubmit}>
@@ -147,14 +147,15 @@ const SignInLayer = () => {
                                 Google
                             </button>
                         </div> */}
-                        <div className="mt-32 text-center text-sm">
+                      {/*  <div className="mt-32 text-center text-sm">
                             <p className="mb-0">
                                 Don’t have an account?{" "}
                                 <Link to="/" className="text-primary-600 fw-semibold">
                                     Sign Up
                                 </Link>
                             </p>
-                        </div>
+                        </div>  
+                        */}
                     </form>
                 </div>
             </div>

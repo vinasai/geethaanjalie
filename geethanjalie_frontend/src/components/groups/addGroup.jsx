@@ -1,37 +1,64 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import MasterLayout from "../../masterLayout/MasterLayout";
 import FormHandler from "react-form-buddy";
 import axiosInstance from '../../hook/axiosInstance';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
+import { Multiselect } from 'multiselect-react-dropdown';
 
 const AddGroup = () => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
-    const [formSubmitted, setFormSubmitted] = useState(false);
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate();
+    const [selectedDays, setSelectedDays] = useState([]);
+
+    const onSelect = (selectedList) => {
+        setSelectedDays(selectedList.map(item => item.day)); 
+    };
+
+    const onRemove = (selectedList) => {
+        setSelectedDays(selectedList.map(item => item.day));
+    };
 
     const validate = (values) => {
         let errors = {};
+
+        if (selectedDays.length === 0) { 
+            errors.day = "Day is required";
+        }
         if (!values.groupName) {
             errors.groupName = "Group Name is required";
         }
         if (!values.scheduleTime) {
             errors.scheduleTime = "Schedule Time is required";
         }
+
         return errors;
     };
 
-    const {
-        handleSubmit,
-        handleChange,
-        values,
-        errors,
-    } = FormHandler(submitAddGroup, validate);
+    const { handleSubmit, handleChange, values, errors } = FormHandler(submitAddGroup, validate);
 
-    function submitAddGroup() {
-        setFormSubmitted(true);
+    async function submitAddGroup() {
+        if (selectedDays.length === 0) {
+            toast.error("Please select at least one day.");
+            return;
+        }
+
+        const formData = {
+            ...values,
+            day: selectedDays, 
+        };
+
+        try {
+            const res = await axiosInstance.post(`/groups/group`, formData);
+            console.log("Group added successfully: ", res.data);
+            toast.success("Group added successfully!");
+            navigate('/group-list');
+        } catch (err) {
+            console.error("Error adding group: ", err);
+            toast.error("Something went wrong. Please try again.");
+        }
     }
 
     const handleImageChange = (e) => {
@@ -45,27 +72,19 @@ const AddGroup = () => {
         }
     };
 
-    useEffect(() => {
-        if (!formSubmitted) {
-            return;
-        }
-        axiosInstance.post(`/groups/group`, values)
-            .then((res) => {
-                console.log("Group added successfully: ", res.data);
-                toast.success("Group added successfully!");
-            })
-            .catch((err) => {
-                console.error("Error adding group: ", err);
-                toast.error("Something went wrong. Please try again.");
-            })
-            .finally(() => {
-                setFormSubmitted(false);
-            });
-    }, [formSubmitted]);
-
     const handleCancel = () => {
-        navigate('/group-list'); // Navigate to the "Groups" page
+        navigate('/group-list'); 
     };
+
+    const dayOptions = [
+        { id: 1, day: "Monday" },
+        { id: 2, day: "Tuesday" },
+        { id: 3, day: "Wednesday" },
+        { id: 4, day: "Thursday" },
+        { id: 5, day: "Friday" },
+        { id: 6, day: "Saturday" },
+        { id: 7, day: "Sunday" }
+    ];
 
     return (
         <MasterLayout>
@@ -75,8 +94,8 @@ const AddGroup = () => {
                         <div className="col-xxl-6 col-xl-8 col-lg-10">
                             <div className="card border">
                                 <div className="card-body">
-                                    <h6 className="text-md text-primary-light mb-16">Add Group Details</h6>
-                                    {/* Upload Image Start */}
+                                    <h6 className="text-2xl fw-bold text-center w-100 py-3 border-bottom">Add Group Details</h6>
+                                    {/* Upload Image 
                                     <div className="mb-24 mt-16">
                                         <div className="avatar-upload">
                                             <div className="avatar-edit position-absolute bottom-0 end-0 me-24 mt-16 z-1 cursor-pointer">
@@ -105,6 +124,7 @@ const AddGroup = () => {
                                         </div>
                                     </div>
                                     {/* Upload Image End */}
+
                                     <form onSubmit={handleSubmit}>
                                         <div className="mb-20">
                                             <label
@@ -129,7 +149,7 @@ const AddGroup = () => {
                                                 htmlFor="time"
                                                 className="form-label fw-semibold text-primary-light text-sm mb-8"
                                             >
-                                                Schedule Time
+                                                Schedule Time <span className="text-danger-600">*</span>
                                             </label>
                                             <input
                                                 type="time"
@@ -142,6 +162,22 @@ const AddGroup = () => {
                                             />
                                             {errors.scheduleTime && <p className="text-danger">{errors.scheduleTime}</p>}
                                         </div>
+
+                                        {/* Multiselect for Days */}
+                                        <div className="mb-20">
+                                            <label className="form-label fw-semibold text-primary-light text-sm mb-8">
+                                                Select Days <span className="text-danger-600">*</span>
+                                            </label>
+                                            <Multiselect
+                                                options={dayOptions} 
+                                                selectedValues={dayOptions.filter(item => selectedDays.includes(item.day))}
+                                                onSelect={onSelect}
+                                                onRemove={onRemove}
+                                                displayValue="day"
+                                            />
+                                            {errors.day && <p className="text-danger">{errors.day}</p>}
+                                        </div>
+
                                         <div className="d-flex align-items-center justify-content-center gap-3">
                                             <button
                                                 type="button"

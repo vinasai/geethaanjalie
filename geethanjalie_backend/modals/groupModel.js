@@ -3,8 +3,14 @@ import mongoose from "mongoose";
 
 // Group Model collection (Attributes)
 const groupSchema = new mongoose.Schema({
+
+
+    day: {
+        type: [String], // Change from String to an array of strings
+        required: true,
+    },
     scheduleTime: {
-        type: String,
+        type: [String],
         required: true
     },
     groupName: {
@@ -12,6 +18,7 @@ const groupSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    
     members: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User' // Refers to the User model

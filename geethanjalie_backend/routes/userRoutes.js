@@ -7,7 +7,8 @@ import {
     registerUser,
     resetPassword,
     verifiedUser,
-    getUserCount
+    getUserCount,
+    updateUser
 } from '../controllers/userController.js';
 import { get } from 'mongoose';
 
@@ -24,6 +25,7 @@ router.route('/getUsers').get(getUsers); // api for get all users
 router.route('/addUser').post(createUser);
 router.route('/deleteUser/:id').delete(deleteUser);
 router.route('/userCount').get(getUserCount);
+router.route("/updateUser/:id").put(updateUser);
 
 
 export default router;

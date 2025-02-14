@@ -6,6 +6,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FormHandler from "react-form-buddy";
+import { useNavigate } from 'react-router-dom';
 import {useGroupStore, useEditGroupStore} from '../../hook/store';
 
 const AddStudent = () => {
@@ -13,7 +14,9 @@ const AddStudent = () => {
     const [selectedValue, setSelectedValue] = useState([]);
     const [isSubmit, setIsSubmit] = useState(false);
     const groupId = useGroupStore((state) => state.groupId)
+    const navigate = useNavigate();
     const groupData = useEditGroupStore((state)=> state.group);
+
     const {
         handleSubmit,
         handleChange,
@@ -105,6 +108,10 @@ const AddStudent = () => {
     console.log()
     console.log(selectedValue,":adfg")
 
+
+    const handleCancel = () => {
+        navigate('/group-list'); 
+    };
     return (
         <MasterLayout>
             <div className="card h-100 p-0 radius-12">
@@ -124,6 +131,9 @@ const AddStudent = () => {
                                                 Students
                                                 <span className="text-danger-600">*</span>{" "}
                                             </label>
+
+
+                                            
                                             <Multiselect
                                                 options={studentList} // Options to display in the dropdown
                                                 selectedValues={selectedValue} // Preselected value to persist in dropdown
@@ -136,7 +146,7 @@ const AddStudent = () => {
                                             <button
                                                 type="button"
                                                 className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-                                                onClick={() => setSelectedValue([])}
+                                                onClick={handleCancel}
                                             >
                                                 Cancel
                                             </button>

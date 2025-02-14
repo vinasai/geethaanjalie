@@ -5,6 +5,7 @@ import axiosInstance from "../hook/axiosInstance";
 import PopUp from './PopUp/PopUp';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import EditUserModal from './EditUserModal';
 
 const UsersListLayer = () => {
     const [studentList, setStudentList] = useState([]);
@@ -13,6 +14,17 @@ const UsersListLayer = () => {
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
     const [deleteId, setDeleteId] = useState(null);
+    const [editUser, setEditUser] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+
+
+
+
+    const handleUpdate = () => {
+        setUpdate(prev => !prev);
+    };
+
+
 
 
     function handleDelete() {
@@ -49,6 +61,7 @@ const UsersListLayer = () => {
                 setDeleteId(null); // Reset deleteId in case of error
             });
     }
+    
 
     return (
         <>
@@ -92,6 +105,17 @@ const UsersListLayer = () => {
                             <option value="Inactive">Inactive</option>
                         </select>
                     </div> */}
+
+
+<EditUserModal 
+                show={showEditModal}
+                handleClose={() => {
+                    setShowEditModal(false);
+                    setEditUser(null);
+                }}
+                user={editUser}
+                onUpdate={handleUpdate}
+            />
                     <Link
                         to="/add-user"
                         className="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"
@@ -128,9 +152,9 @@ const UsersListLayer = () => {
                                     <th scope="col">Email</th>
                                     <th scope="col">Contact No</th>
                                     <th scope="col">Date Of Birth</th>
-                                    <th scope="col" className="text-center">
+                                  {/*  <th scope="col" className="text-center">
                                         Status
-                                    </th>
+                                    </th>  */}
                                     <th scope="col" className="text-center">
                                         Action
                                     </th>
@@ -175,18 +199,20 @@ const UsersListLayer = () => {
                                         </td>
                                         <td>{data.contactNo}</td>
                                         <td>{data.dateOfBirth}</td>
-                                        {data.isEmailVerified === true ? <td className="text-center">
+                               {/*         {data.isEmailVerified === true ? <td className="text-center">
                                             <span
                                                 className="badge text-sm fw-semibold text-success-600 bg-success-100 px-20 py-9 radius-4 text-white">
                                                 Verified
                                             </span>
                                         </td> :
-                                            <td className="text-center">
+                                             <td className="text-center">
                                                 <span
                                                     className="badge text-sm fw-semibold text-danger-600 bg-danger-100 px-20 py-9 radius-4 text-white">
                                                     Not Verified
                                                 </span>
-                                            </td>}
+                                            </td>}    
+                                            */}
+
                                         <td className="text-center">
                                             <div className="d-flex align-items-center gap-10 justify-content-center">
                                                 {/* <button
@@ -217,6 +243,24 @@ const UsersListLayer = () => {
                                                         className="menu-icon"
                                                     />
                                                 </button>
+
+                                                <button  to={{
+        pathname: "/add-user",
+        state: { user: data }  // Pass user data as state
+    }}
+    type="button"
+    className="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+    onClick={() => {
+        setEditUser(data);  // Set the user data for editing
+        setShowEditModal(true);  // Show the edit modal
+    }}
+>
+    <Icon icon="lucide:edit" className="menu-icon" />
+</button>
+
+
+
+
                                             </div>
                                         </td>
                                     </tr>))}
