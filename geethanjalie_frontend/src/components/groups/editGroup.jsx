@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import {useEditGroupStore, useGroupStore} from '../../hook/store';
 import UploadWithImagePreviewList from '../child/UploadWithImagePreviewList';
 import { supabase } from '../../hook/supabaseClient';
+import { Multiselect } from 'multiselect-react-dropdown';
 
 const EditGroup = () => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
@@ -19,6 +20,17 @@ const EditGroup = () => {
     const groupId = useGroupStore((state) => state.groupId)
     const groupData = useEditGroupStore((state)=> state.group);
     const [fileURLs, setFileURLs] = useState([]);
+      const [day, setDay] = useState("");
+        const [selectedDays, setSelectedDays] = useState([]);
+      
+        const onSelect = (selectedList) => {
+            setSelectedDays(selectedList.map(item => item.day));
+        };
+    
+        const onRemove = (selectedList) => {
+            setSelectedDays(selectedList.map(item => item.day));
+        };
+        
 
     console.log("groupData",groupData);
     console.log(groupData)
@@ -34,6 +46,10 @@ const EditGroup = () => {
         if (!values.scheduleTime) {
             errors.scheduleTime = "Schedule Time is required";
         }
+        if (selectedDays.length === 0) { 
+            errors.day = "Day is required";
+        }
+     
         return errors;
     };
 
@@ -46,16 +62,34 @@ const EditGroup = () => {
     } = FormHandler(submitEditGroup, validate);
 
     async function submitEditGroup() {
-        if (files.length === 0){
-            setFormSubmitted(true);
-        }
-        else{
-            await handleUpload()
-        }
-        
-        // setFormSubmitted(true);
-    }
+        try {
+            if (selectedDays.length === 0) {
+                toast.error("Please select at least one day.");
+                return;
+            }
 
+            if (files.length > 0) {
+                await handleUpload();
+            }
+
+            const updatedGroup = {
+                ...values,
+                day: selectedDays // Changed from 'days' to 'day' to match AddGroup
+            };
+
+            await axiosInstance.put(`/groups/updateGroup/${groupData._id}`, updatedGroup);
+            toast.success("Successfully Updated");
+            navigate('/group-list');
+        } catch (error) {
+            toast.error("Error updating group");
+            console.error("Update error:", error.response ? error.response.data : error.message);
+        } finally {
+            setFormSubmitted(false);
+        }
+    }
+    
+
+    
     console.log();
     
 
@@ -75,39 +109,24 @@ const EditGroup = () => {
     };
 
 
-    useEffect(()=>{
-        if(!groupData){
-            return
+    useEffect(() => {
+        if (groupData) {
+            // Convert days array to selectedDays if it exists
+            setSelectedDays(groupData.day || groupData.days || []);
+            initForm({
+                ...groupData,
+                // Ensure the form data matches the expected structure
+                groupName: groupData.groupName,
+                scheduleTime: groupData.scheduleTime
+            });
         }
-        initForm(groupData)
-
-    },[groupData])
+    }, [groupData]);
+    
+    
 
 
     console.log(fileURLs,fileURLs)
-    useEffect(() => {
-        if (!formSubmitted) return;
-
-        // if (!groupId) {
-        //     console.error("Group ID is missing.");
-        //     toast.error("Group ID is required to update the group.");
-        //     setIsSubmit(false);
-        //     return;
-        // }
-        axiosInstance.put(`/groups/updateGroup/${groupData._id}`, values)
-            .then((res) => {
-                console.log("Successfully updated:", res.data);
-                toast.success("Successfully Updated");
-            })
-            .catch((err) => {
-                console.error("Error updating group:", err);
-                toast.error("Something went wrong");
-            })
-            .finally(() => {
-                setFormSubmitted(false);
-               
-            });
-    }, [formSubmitted]);
+ 
 
     const handleUpload = async () => {
             // if (files.length === 0) return alert('Please select files.');
@@ -133,6 +152,16 @@ const EditGroup = () => {
             setFormSubmitted(true);
 
         }
+
+        const dayOptions = [
+            { id: 1, day: "Monday" },
+            { id: 2, day: "Tuesday" },
+            { id: 3, day: "Wednesday" },
+            { id: 4, day: "Thursday" },
+            { id: 5, day: "Friday" },
+            { id: 6, day: "Saturday" },
+            { id: 7, day: "Sunday" }
+        ];
     
 
     return (
@@ -144,7 +173,7 @@ const EditGroup = () => {
                         <div className="col-xxl-6 col-xl-8 col-lg-10">
                             <div className="card border">
                                 <div className="card-body">
-                                    <h6 className="text-md text-primary-light mb-16">Edit Group Details</h6>
+                                    <h6 className="text-2xl fw-bold text-center w-100 py-3 border-bottom">Edit Group Details</h6>
                                     {/* Upload Image Start */}
                                     {/* <div className="mb-24 mt-16">
                                         <div className="avatar-upload">
@@ -213,6 +242,21 @@ const EditGroup = () => {
                                         </div>
                                         <div className='my-5 row'>
                                             <div className='col-md-12'>
+
+                                      {/* Multiselect for Days */}
+                                                                              <div className="mb-20">
+                                                                                  <label className="form-label fw-semibold text-primary-light text-sm mb-8">
+                                                                                      Select Days <span className="text-danger-600">*</span>
+                                                                                  </label>
+                                                                                  <Multiselect
+                    options={dayOptions}
+                    selectedValues={dayOptions.filter(item => selectedDays.includes(item.day))}
+                    onSelect={onSelect}
+                    onRemove={onRemove}
+                    displayValue="day"
+                />
+                                                                                  {errors.day && <p className="text-danger">{errors.day}</p>}
+                                                                              </div>
 
                                         <UploadWithImagePreviewList files={files} setFiles={setFiles}/>
                                             </div>

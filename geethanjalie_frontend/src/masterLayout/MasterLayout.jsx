@@ -97,7 +97,7 @@ const MasterLayout = ({ children }) => {
               className="dark-logo"
             />
             <img
-              src="assets/images/logo-icon.png"
+              src="assets/image"
               alt="site logo"
               className="logo-icon"
             />
@@ -1405,17 +1405,23 @@ const MasterLayout = ({ children }) => {
                 </div> */}
                 {/* Notification dropdown end */}
                 <div className="dropdown">
-                  <button
+                {/*  <button
                     className="d-flex justify-content-center align-items-center rounded-circle"
                     type="button"
                     data-bs-toggle="dropdown"
                   >
+
+                    
                     <img
-                      src="assets/images/user.png"
+                      src="C:\Users\PIRUTHIVI K\Desktop\Geethanjali\geethaanjalie\geethanjalie_frontend\src\assets\logo.png"   // image
                       alt="image_user"
                       className="w-40-px h-40-px object-fit-cover rounded-circle"
                     />
+
+                  
                   </button>
+
+                  */}
                   <div className="dropdown-menu to-top dropdown-menu-sm">
                     <div className="py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
                       {/* <div>

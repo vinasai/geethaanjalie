@@ -5,14 +5,18 @@ import User from "../modals/userModal.js"
 // Create a new group
 const createGroup = asyncHandler(async (req, res) => {
     const {
+        day,
         scheduleTime,
-        groupName
+        groupName,
+        
     } = req.body;
-
+    console.log(req.body); // Debugging
 
     const group = await Group.create({
+        day,
         scheduleTime,
-        groupName
+        groupName,
+        
     })
 
     if (group) {
@@ -38,16 +42,19 @@ const getGroups = asyncHandler(async (req, res) => {
 
 const editGroups = asyncHandler(async (req, res) => {
     const { id } = req.params; // Group ID from params
-    const { scheduleTime, groupName, userIds, resources } = req.body; // Extract userIds
+    const { scheduleTime, groupName, userIds, resources,day } = req.body; // Extract userIds
 
     // Find the group by ID
     const group = await Group.findById(id);
 
     if (group) {
         // Update scheduleTime and groupName if provided
+       
+        group.day = day || group.day;
         group.scheduleTime = scheduleTime || group.scheduleTime;
         group.groupName = groupName || group.groupName;
         group.resources = resources || group.resources;
+
 
         // Validate and add unique user IDs to members array
         if (userIds && Array.isArray(userIds)) {

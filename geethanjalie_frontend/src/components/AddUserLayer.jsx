@@ -7,68 +7,54 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../hook/axiosInstance';
 
 const AddUserLayer = () => {
-    const [formSubmitted, setFormSubmitted] = useState(false);
+    const [values, setValues] = useState({
+        username: '',
+        email: '',
+        password: '',
+    });
     const navigate = useNavigate();
-    const [imagePreviewUrl, setImagePreviewUrl] = useState('');
 
-    const validate = (values) => {
-        let errors = {};
-        if (!values.name) {
-            errors.name = "Name is required";
-        }
-        if (!values.email) {
-            errors.email = "Email is required";
-        }
-        if (!values.contactNo) {
-            errors.contactNo = "Contact No is required";
-        }
-        return errors;
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setValues({ ...values, [name]: value });
     };
 
-    const {
-        handleSubmit,
-        handleChange,
-        values,
-        errors,
-    } = FormHandler(submitAddStudent, validate);
+    const isRegister = () => {
+        axiosInstance.post("/users/register", values)
+            .then(res => {
+                console.log(res.data);
+                toast.success("Successfully Registered");
 
-    function submitAddStudent() {
-        setFormSubmitted(true);
-    }
-
-
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreviewUrl(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
+                 
+            setValues({
+               name: '',
+                email: '',
+                password: '',
+                contactNo: '',
+                dateOfBirth: '',
+            });
+                
+            })
+            .catch(err => {
+                console.log(err.response.data);
+                toast.error(err.response?.data?.message || "Registration failed");
+            });
     };
 
-    useEffect(() => {
-        if (!formSubmitted) {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (values.password.length < 8) {
+            toast.error("Password must have at least 8 characters");
             return;
         }
-        axiosInstance.post(`/users/addUser`, values)
-            .then((res) => {
-                console.log("User added successfully: ", res.data);
-                toast.success("User added successfully!");
-            })
-            .catch((err) => {
-                console.error("Error adding User: ", err);
-                toast.error("Something went wrong. Please try again.");
-            })
-            .finally(() => {
-                setFormSubmitted(false);
-            });
-    }, [formSubmitted]);
+        isRegister();
+    };
+
 
     const handleCancel = () => {
         navigate('/users-list'); // Navigate to the "Groups" page
     };
+
 
     return (
         <>
@@ -109,81 +95,85 @@ const AddUserLayer = () => {
                                     </div>
                                 </div> */}
                                 {/* Upload Image End */}
-                                <form onSubmit={handleSubmit}>
-                                    <div className="mb-20">
-                                        <label
-                                            htmlFor="name"
-                                            className="form-label fw-semibold text-primary-light text-sm mb-8"
-                                        >
-                                            Full Name <span className="text-danger-600">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control radius-8"
-                                            id="name"
-                                            placeholder="Enter Full Name"
-                                            onChange={handleChange}
-                                            name="name"
-
-                                            value={values.name || ""}
-                                        />
-                                            {errors.name && <p className="text-danger">{errors.name}</p>}
-
-                                    </div>
-                                    <div className="mb-20">
-                                        <label
-                                            htmlFor="email"
-                                            className="form-label fw-semibold text-primary-light text-sm mb-8"
-                                        >
-                                            Email <span className="text-danger-600">*</span>
-                                        </label>
-                                        <input
-                                            type="email"
-                                            className="form-control radius-8"
-                                            id="email"
-                                            placeholder="Enter email address"
-                                            onChange={handleChange}
-                                            name="email"
-
-                                            value={values.email || ""}
-                                        />
-                                    </div>
-                                    <div className="mb-20">
-                                        <label
-                                            htmlFor="number"
-                                            className="form-label fw-semibold text-primary-light text-sm mb-8"
-                                        >
-                                            Phone
-                                        </label>
-                                        <input
-                                            type="number"
-                                            className="form-control radius-8"
-                                            id="number"
-                                            placeholder="Enter phone number"
-                                            onChange={handleChange}
-                                            name="contactNo"
-
-                                            value={values.contactNo || ""}
-                                        />
-                                    </div>
-                                    <div className="mb-20">
-                                        <label
-                                            htmlFor="date"
-                                            className="form-label fw-semibold text-primary-light text-sm mb-8"
-                                        >
-                                            Date Of Birth
-                                        </label>
-                                        <input
-                                            type="date"
-                                            className="form-control radius-8"
-                                            id="number"
-                                            placeholder="Enter phone number"
-                                            onChange={handleChange}
-                                            name="dateOfBirth"
-
-                                            value={values.dateOfBirth || ""}
-                                        />
-                                    </div>
+                         <form onSubmit={handleSubmit}>
+                                                 <div className="icon-field mb-16">
+                                                     <span className="icon top-50 translate-middle-y">
+                                                         <Icon icon="f7:person" />
+                                                     </span>
+                                                     <input
+                                                         type="text"
+                                                         name="name"
+                                                         value={values.name}
+                                                         onChange={handleInputChange}
+                                                         className="form-control h-56-px bg-neutral-50 radius-12"
+                                                         placeholder="Name"
+                                                         required
+                                                     />
+                                                 </div>
+                                                 <div className="icon-field mb-16">
+                                                     <span className="icon top-50 translate-middle-y">
+                                                         <Icon icon="mage:email" />
+                                                     </span>
+                                                     <input
+                                                         type="email"
+                                                         name="email"
+                                                         value={values.email}
+                                                         onChange={handleInputChange}
+                                                         className="form-control h-56-px bg-neutral-50 radius-12"
+                                                         placeholder="Email"
+                                                         required
+                                                     />
+                                                 </div>
+                                                 <div className="mb-20">
+                                                     <div className="position-relative">
+                                                         <div className="icon-field">
+                                                             <span className="icon top-50 translate-middle-y">
+                                                                 <Icon icon="solar:lock-password-outline" />
+                                                             </span>
+                                                             <input
+                                                                 type="password"
+                                                                 name="password"
+                                                                 value={values.password}
+                                                                 onChange={handleInputChange}
+                                                                 className="form-control h-56-px bg-neutral-50 radius-12"
+                                                                 id="your-password"
+                                                                 placeholder="Password"
+                                                                 required
+                                                             />
+                                                         </div>
+                                                         {/* <span className="mt-12 text-sm text-secondary-light">
+                                                             Your password must have at least 8 characters
+                                                         </span> */}
+                                                     </div>
+                                                 </div>
+                                                 <div className="icon-field mb-16">
+                                                     <span className="icon top-50 translate-middle-y">
+                                                         <Icon icon="mage:email" />
+                                                     </span>
+                                                     <input
+                                                         type="text"
+                                                         name="contactNo"
+                                                         value={values.contactNo}
+                                                         onChange={handleInputChange}
+                                                         className="form-control h-56-px bg-neutral-50 radius-12"
+                                                         placeholder="Contact No"
+                                                         required
+                                                     />
+                                                 </div>
+                                                 <div className="icon-field mb-16">
+                                                     <span className="icon top-50 translate-middle-y">
+                                                         <Icon icon="mage:email" />
+                                                     </span>
+                                                     <input
+                                                         type="date"
+                                                         name="dateOfBirth"
+                                                         value={values.dateOfBirth}
+                                                         onChange={handleInputChange}
+                                                         className="form-control h-56-px bg-neutral-50 radius-12"
+                                                         placeholder="Date Of Birth"
+                                                         required
+                                                     />
+                                                 </div>
                                     {/*<div className="mb-20">*/}
                                     {/*    <label*/}
                                     {/*        htmlFor="depart"*/}
@@ -245,7 +235,7 @@ const AddUserLayer = () => {
                                         <button
                                             type="button"
                                             className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-                                            onClick={handleCancel}
+                                           onClick={handleCancel}
                                         >
                                             Cancel
                                         </button>

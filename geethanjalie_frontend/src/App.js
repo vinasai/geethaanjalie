@@ -90,6 +90,7 @@ import PopUp from "./components/PopUp/PopUp";
 import { ToastContainer } from "react-toastify";
 import EditGroup from "./components/groups/editGroup";
 import Home from "./components/home/Home";
+import EditUserModal from "./components/EditUserModal";
 
 
 function App() {
@@ -108,6 +109,7 @@ function App() {
         <Route exact path="/index-7" element={<HomePageSeven />} />
         {/* SL */}
         <Route exact path="/pop-up" element={<PopUp />} />
+        <Route exact path="/edituser" element={<EditUserModal />} />
         
         
         <Route exact path="/add-user" element={<AddUserPage />} /> {/* used */}
@@ -164,8 +166,8 @@ function App() {
         <Route exact path="/progress" element={<ProgressPage />} />
         <Route exact path="/radio" element={<RadioPage />} />
         <Route exact path="/role-access" element={<RoleAccessPage />} />
-        <Route exact path="/sign-in" element={<SignInPage />} /> {/* used */}
-        <Route exact path="/" element={<SignUpPage />} /> {/* used */}
+        <Route exact path="/" element={<SignInPage />} /> {/* used */}
+        <Route exact path="/sign-up" element={<SignUpPage />} /> {/* used */}
         <Route exact path="/star-rating" element={<StarRatingPage />} />
         <Route exact path="/starred" element={<StarredPage />} />
         <Route exact path="/switch" element={<SwitchPage />} />

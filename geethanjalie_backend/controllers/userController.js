@@ -40,6 +40,7 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            password :user.password,
             contactNo: user.contactNo,
             dateOfBirth: user.dateOfBirth,
             role: user.role,
@@ -57,6 +58,7 @@ const createUser = asyncHandler(async (req, res) => {
     const {
         name,
         email,
+        password,
         contactNo,
         dateOfBirth,
     } = req.body;
@@ -65,6 +67,7 @@ const createUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         name,
         email,
+        password,
         contactNo,
         dateOfBirth,
     })
@@ -84,6 +87,7 @@ const verifiedUser = asyncHandler(async (req, res) => {
         user.firstName = req.body.firstName || user.firstName;
         user.lastName = req.body.lastName || user.lastName;
         user.email = req.body.email || user.email;
+        user.password=req.body.password  || user.password;
         user.dateOfBirth = req.body.dateOfBirth || user.dateOfBirth;
         user.contactNo = req.body.contactNo || user.contactNo;
         user.role = req.body.role || user.role;
@@ -101,6 +105,7 @@ const verifiedUser = asyncHandler(async (req, res) => {
             firstName: updatedUser.firstName,
             lastName: updatedUser.lastName,
             email: updatedUser.email,
+            password :updateUser.password,
             role: updatedUser.role,
             profilePic: updatedUser.profilePic,
             isVerified: updatedUser.isVerified,
@@ -192,7 +197,33 @@ const deleteUser = asyncHandler(async (req, res) => {
 })
 
 
+const updateUser = asyncHandler(async (req, res) => {
+    const {
+        name,
+        email,
+        contactNo,
+        password,
+        dateOfBirth,
+    } = req.body;
+
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.contactNo = contactNo || user.contactNo;
+        user.dateOfBirth = dateOfBirth || user.dateOfBirth;
+        user.password = password || user.password;
+
+        const updatedUser = await user.save();
+        res.status(200).json(updatedUser);
+    } else {
+        res.status(404).json({ message: "User not found" });
+    }
+});
 
 
-export { getUserCount, registerUser, loginUser, verifiedUser, resetPassword, forgotPassword, getUsers, createUser, deleteUser }
+
+export { getUserCount, registerUser, loginUser, verifiedUser, resetPassword, forgotPassword, getUsers, createUser, deleteUser,updateUser }
+
 

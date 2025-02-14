@@ -5,6 +5,7 @@ import axiosInstance from '../../hook/axiosInstance';
 import { supabase } from "../../hook/supabaseClient";
 import Multiselect from 'multiselect-react-dropdown';
 import FormHandler from "react-form-buddy";
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const UploadFiles = () => {
@@ -14,6 +15,7 @@ const UploadFiles = () => {
     const [fileNames, setFileNames] = useState([]);
     const [files, setFiles] = useState([]);
     const [fileURLs, setFileURLs] = useState([]);
+    const navigate = useNavigate();
     const [isSubmit, setIsSubmit] = useState(false);
     
     const {
@@ -137,6 +139,10 @@ const UploadFiles = () => {
     console.log(files);
     console.log(fileURLs);
 
+    const handleCancel = () => {
+        navigate('/group-list'); 
+    };
+
     return (
         <MasterLayout>
             <div className="card h-100 p-0 radius-12">
@@ -210,6 +216,8 @@ const UploadFiles = () => {
                                             <button
                                                 type="button"
                                                 className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
+
+                                                onClick={handleCancel}
                                             >
                                                 Cancel
                                             </button>
