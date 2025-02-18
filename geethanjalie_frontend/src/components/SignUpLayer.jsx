@@ -4,12 +4,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../hook/axiosInstance'
 import { toast } from 'react-toastify';
 import signUpImage from '../assets/img1.png';
+import RoleAccessLayer from './RoleAccessLayer';
 
 const SignUpLayer = () => {
     const [values, setValues] = useState({
         username: '',
         email: '',
         password: '',
+       
+        
     });
     const navigate = useNavigate();
 
@@ -64,6 +67,7 @@ const SignUpLayer = () => {
                             <span className="icon top-50 translate-middle-y">
                                 <Icon icon="f7:person" />
                             </span>
+                           
                             <input
                                 type="text"
                                 name="name"

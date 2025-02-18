@@ -3,6 +3,8 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
 
+//2/18---changePassword ection edit(admin and student can change their password with frontend )
+
 const MasterLayout = ({ children }) => {
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
@@ -92,12 +94,12 @@ const MasterLayout = ({ children }) => {
               className="light-logo"
             />
             <img
-              src="assets/images/logo-light.png"
+              src="assets/images/asset/logog.png"
               alt="site logo"
               className="dark-logo"
             />
             <img
-              src="assets/image"
+              src="assets/images/asset/logog.png"
               alt="site logo"
               className="logo-icon"
             />
@@ -198,6 +200,19 @@ const MasterLayout = ({ children }) => {
                 <span>Files</span>
               </NavLink>
             </li>)}
+
+            {(userRole === "student" || userRole === "admin") && (<li>
+    <NavLink to="/forgot-password" className={(navData) =>
+        navData.isActive ? "active-page" : ""
+    }>
+      <Icon icon="solar:key-outline" className="menu-icon"/>
+      <span>  Change Password</span>
+    </NavLink>
+  </li>
+)}
+
+
+            
             <hr></hr>
             <li>
               <NavLink

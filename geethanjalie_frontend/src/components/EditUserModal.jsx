@@ -26,6 +26,23 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
     }, [user]);
 
     const handleChange = (e) => {
+
+           const { name, value } = e.target;
+        
+                // Prevent selecting future dates for dateOfBirth
+                if (name === "dateOfBirth") {
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Remove time for accurate comparison
+        
+                    if (selectedDate > today) {
+                        toast.error("Date of Birth cannot be a future date");
+                        return;
+                    }
+                }
+        
+            
+        
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
@@ -84,7 +101,7 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
                                                              
                                                                      <div className="icon-field mb-16">
                                                                          <span className="icon top-50 translate-middle-y">
-                                                                             <Icon icon="mage:email" />
+                                                                             <Icon icon="solar:phone-outline" />
                                                                          </span>
                                                                          <input
                                                                              type="text"
@@ -98,7 +115,7 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
                                                                      </div>
                                                                      <div className="icon-field mb-16">
                                                                          <span className="icon top-50 translate-middle-y">
-                                                                             <Icon icon="mage:email" />
+                                                                             <Icon icon="solar:calendar-outline" />
                                                                          </span>
                                                                          <input
                                                                              type="date"
@@ -109,6 +126,10 @@ const EditUserModal = ({ show, handleClose, user, onUpdate }) => {
                                                                              placeholder="Date Of Birth"
                                                                              required
                                                                          />
+                                                                          
+                                                                          <small className="text-muted position-absolute" style={{ top: "100%", left: "10px" }}>
+        Select Date of Birth
+    </small>
                                                                      </div>
                     <button
                             type="submit"
