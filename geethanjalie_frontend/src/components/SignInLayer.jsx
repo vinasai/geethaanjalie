@@ -146,16 +146,17 @@ const SignInLayer = () => {
                                 />
                                 Google
                             </button>
-                        </div> */}
-                      {/*  <div className="mt-32 text-center text-sm">
+                        </div> 
+                       <div className="mt-32 text-center text-sm">
                             <p className="mb-0">
                                 Don’t have an account?{" "}
-                                <Link to="/" className="text-primary-600 fw-semibold">
+                                <Link to="/sign-up" className="text-primary-600 fw-semibold">
                                     Sign Up
                                 </Link>
                             </p>
-                        </div>  
-                        */}
+                        </div> 
+                        */} 
+                        
                     </form>
                 </div>
             </div>
