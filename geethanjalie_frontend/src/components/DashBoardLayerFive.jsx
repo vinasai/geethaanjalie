@@ -14,12 +14,12 @@ const DashBoardLayerFive = () => {
     return (
         <>
             <div className="row gy-4">
-
+            <RevenueStatisticsOne />
                 {/* UnitCountFour */}
                 {userRole === "admin" && (<UnitCountFour />)}
 
                 {/* RevenueStatisticsOne */}
-                <RevenueStatisticsOne />
+
 
 
                 {/* SalesStatisticTwo */}

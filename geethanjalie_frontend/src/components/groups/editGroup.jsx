@@ -258,7 +258,7 @@ const EditGroup = () => {
                                                                                   {errors.day && <p className="text-danger">{errors.day}</p>}
                                                                               </div>
 
-                                        <UploadWithImagePreviewList files={files} setFiles={setFiles}/>
+                                        {/* <UploadWithImagePreviewList files={files} setFiles={setFiles}/> */}
                                             </div>
                                         </div>
                                         <div className="d-flex align-items-center justify-content-center gap-3">
