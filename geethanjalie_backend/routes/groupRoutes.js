@@ -1,5 +1,5 @@
 import express from 'express';
-import {createGroup, deleteGroup, editGroups, getGroupCount, getGroups, saveFileUrl} from "../controllers/groupController.js";
+import {createGroup, deleteGroup, editGroups, getGroupCount, getGroups, saveFileUrl, getGroupsWithStudentCount} from "../controllers/groupController.js";
 
 const router = express.Router();
 
@@ -11,5 +11,6 @@ router.route('/updateGroup/:id').put(editGroups); // api for updating a group
 router.route('/deleteGroup/:id').delete(deleteGroup); // api for deleting a group
 router.route('/saveFileGroup').post(saveFileUrl)
 router.route('/groupCount').get(getGroupCount)
+router.route('/groupStudentCount').get(getGroupsWithStudentCount)
 
 export default router;
