@@ -166,8 +166,8 @@ function App() {
         <Route exact path="/progress" element={<ProgressPage />} />
         <Route exact path="/radio" element={<RadioPage />} />
         <Route exact path="/role-access" element={<RoleAccessPage />} />
-        <Route exact path="/" element={<SignInPage />} /> {/* used */}
-        <Route exact path="/sign-up" element={<SignUpPage />} /> {/* used */}
+        <Route exact path="/sign-in" element={<SignInPage />} /> {/* used */}
+        <Route exact path="/" element={<SignUpPage />} /> {/* used */}
         <Route exact path="/star-rating" element={<StarRatingPage />} />
         <Route exact path="/starred" element={<StarredPage />} />
         <Route exact path="/switch" element={<SwitchPage />} />
