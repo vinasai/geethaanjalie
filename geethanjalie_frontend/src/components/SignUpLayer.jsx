@@ -5,6 +5,7 @@ import axiosInstance from '../hook/axiosInstance'
 import { toast } from 'react-toastify';
 import signUpImage from '../assets/img1.png';
 import RoleAccessLayer from './RoleAccessLayer';
+import signInImage from '../assets/img2.png';
 
 const SignUpLayer = () => {
     const [values, setValues] = useState({
@@ -47,7 +48,7 @@ const SignUpLayer = () => {
         <section className="auth bg-base d-flex flex-wrap">
             <div className="auth-left d-lg-block d-none">
                 <div className="d-flex align-items-center flex-column h-100 justify-content-center round-2">
-                    <img src={signUpImage} className="w-100 rounded-start pb-2 p-2" alt="" />
+                    <img src={signInImage} className="w-100 rounded-start pb-2 p-2" alt="" />
                 </div>
             </div>
             <div className="auth-right py-32 px-24 d-flex flex-column justify-content-center">

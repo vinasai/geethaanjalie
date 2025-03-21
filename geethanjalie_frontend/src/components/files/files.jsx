@@ -101,7 +101,7 @@ const Files = () => {
                 <Modal.Body>
                     <div className="d-flex justify-content-center">
                         {/* Handle video files */}
-                        {selectedFile?.fileUrl?.includes(".mp4") && (
+                        {selectedFile?.fileUrl?.includes("file.mp4") && (
                             <video
                                 width="600"
                                 className="rounded-lg shadow-lg"

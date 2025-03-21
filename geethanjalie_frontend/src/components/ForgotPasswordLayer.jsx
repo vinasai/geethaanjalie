@@ -49,7 +49,7 @@ const ChangePasswordLayer = () => {
         }
         
         // Validate password length
-        if (formData.newPassword.length < 6) {
+        if (formData.newPassword.length < 8) {
             toast.error('New password must be at least 6 characters');
             return;
         }
